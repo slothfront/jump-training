@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f4f0e8">
+<title>JUMP TRAINING</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+JP:wght@400;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== Reset / Vars ===== */
+:root {
+  --paper: #f4f0e8;
+  --black: #1a1a1a;
+  --pure-black: #000000;
+  --red: #e63946;
+  --blue: #1d4ed8;
+  --yellow: #fbbf24;
+  --line: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --text-tertiary: #999999;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+body {
+  font-family: 'Space Grotesk', 'Noto Sans JP', sans-serif;
+  background: var(--paper);
+  color: var(--black);
+  user-select: none;
+  -webkit-user-select: none;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.4;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== Background Geometry (per design system) ===== */
+body::before {
+  content: '';
+  position: fixed;
+  top: 4%; right: -22%;
+  width: 42vw; height: 42vw;
+  max-width: 380px; max-height: 380px;
+  background: var(--red);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.95;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -12%; left: -14%;
+  width: 32vw; height: 32vw;
+  max-width: 320px; max-height: 320px;
+  background: var(--yellow);
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(45deg);
+}
+
+.bg-triangle {
+  position: fixed;
+  top: 50%;
+  left: -10%;
+  width: 0;
+  height: 0;
+  border-left: 70px solid transparent;
+  border-right: 70px solid transparent;
+  border-bottom: 140px solid var(--blue);
+  pointer-events: none;
+  z-index: 0;
+  transform: rotate(20deg);
+}
+
+/* ===== App Layout ===== */
+.app {
+  max-width: 980px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  padding: 16px;
+}
+
+/* ===== Header ===== */
+.app-header {
+  background: var(--paper);
+  border: 3px solid var(--black);
+  box-shadow: 4px 4px 0 var(--black);
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-mark {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.brand-jp {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* ===== View Tabs (per design system: blue when active) ===== */
+.view-tabs {
+  display: flex;
+  border: 3px solid var(--black);
+}
+
+.view-tab {
+  padding: 8px 14px;
+  border: none;
+  border-right: 3px solid var(--black);
+  background: var(--paper);
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  color: var(--black);
+}
+
+.view-tab:last-child {
+  border-right: none;
+}
+
+.view-tab.active {
+  background: var(--blue);
+  color: var(--paper);
+}
+
+/* ===== Day Selector ===== */
+.day-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 3px solid var(--black);
+  box-shadow: 4px 4px 0 var(--black);
+  background: var(--paper);
+  margin-bottom: 22px;
+}
+
+.day-tab {
+  padding: 14px 8px 10px;
+  border: none;
+  border-right: 3px solid var(--black);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.1s;
+  position: relative;
+}
+
+.day-tab:last-child {
+  border-right: none;
+}
+
+.day-tab .day-jp {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.day-tab .day-en {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+}
+
+.day-tab.active {
+  background: var(--blue);
+  color: var(--paper);
+}
+
+.day-tab.active .day-en {
+  color: var(--paper);
+}
+
+/* 進捗マーカー（右下） */
+.day-tab.status-done::after,
+.day-tab.status-partial::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--black);
+}
+
+.day-tab.status-done::after {
+  background: var(--blue);
+}
+
+.day-tab.status-partial::after {
+  background: var(--paper);
+  border: 2px solid var(--blue);
+}
+
+.day-tab.active.status-done::after {
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+.day-tab.active.status-partial::after {
+  background: var(--blue);
+  border-color: var(--paper);
+}
+
+/* ===== Card ===== */
+.card {
+  background: var(--paper);
+  border: 3px solid var(--black);
+  padding: 18px;
+  margin-bottom: 22px;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--black);
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ===== Hero ===== */
+.menu-hero h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(30px, 7vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  line-height: 0.92;
+  margin: 6px 0 8px;
+}
+
+.menu-hero .menu-jp {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 17px;
+  margin-bottom: 4px;
+}
+
+.menu-hero .menu-theme {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.menu-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.meta-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 2px solid var(--black);
+  background: var(--paper);
+}
+
+.meta-tag.intensity-low { background: var(--paper); }
+.meta-tag.intensity-mid { background: var(--yellow); }
+.meta-tag.intensity-high { background: var(--red); color: var(--paper); }
+.meta-tag.optional { background: var(--paper); border-style: dashed; }
+
+/* ===== Progress ===== */
+.progress-wrap {
+  margin-top: 4px;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.progress-count {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.progress-total {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.progress-bar {
+  height: 14px;
+  border: 3px solid var(--black);
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--blue);
+  transition: width 0.3s;
+}
+
+/* ===== Done Stamp ===== */
+.done-stamp-wrap {
+  margin-bottom: 22px;
+}
+
+.done-stamp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 4px solid var(--red);
+  background: var(--paper);
+  transform: rotate(-1.2deg);
+  box-shadow: 6px 6px 0 var(--red);
+}
+
+.done-stamp .stamp-text {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.done-stamp .stamp-jp {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--red);
+}
+
+/* ===== Exercise (button with full Bauhaus active anim) ===== */
+.exercise {
+  background: var(--paper);
+  border: 3px solid var(--black);
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--black);
+  transition: all 0.1s;
+  text-align: left;
+  width: 100%;
+}
+
+.exercise.checked {
+  background: var(--yellow);
+}
+
+.exercise:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--black);
+}
+
+.checkbox {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--black);
+  background: var(--paper);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.exercise.checked .checkbox {
+  background: var(--black);
+}
+
+.checkbox-mark {
+  width: 16px;
+  height: 16px;
+  display: none;
+}
+
+.exercise.checked .checkbox-mark {
+  display: block;
+}
+
+.exercise-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.exercise-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.exercise-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.exercise-reps {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  background: var(--black);
+  color: var(--paper);
+  padding: 2px 8px;
+}
+
+.exercise.checked .exercise-reps {
+  background: var(--paper);
+  color: var(--black);
+  border: 2px solid var(--black);
+  padding: 0 6px;
+}
+
+.exercise-name {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+/* 各セクション（Why / How / Focus）の共通スタイル */
+.ex-section {
+  margin-top: 6px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.exercise.checked .ex-section {
+  color: var(--black);
+}
+
+.ex-label {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--black);
+  color: var(--paper);
+  padding: 1px 6px;
+  margin-right: 6px;
+  vertical-align: 1px;
+  font-weight: 500;
+}
+
+.exercise.checked .ex-label {
+  background: var(--paper);
+  color: var(--black);
+  border: 1px solid var(--black);
+  padding: 0 5px;
+}
+
+/* Why は太字で目立たせる（一番大事な情報） */
+.ex-section.why .ex-text {
+  font-weight: 700;
+  color: var(--black);
+}
+
+/* Focus は赤いラベル */
+.ex-section.focus .ex-label {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.exercise.checked .ex-section.focus .ex-label {
+  background: var(--red);
+  color: var(--paper);
+  border: 1px solid var(--black);
+}
+
+/* ===== Checkpoint ===== */
+.checkpoint-card {
+  background: var(--yellow);
+  border: 3px solid var(--black);
+  padding: 14px 16px;
+  margin-bottom: 22px;
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+.checkpoint-card .section-label {
+  margin-bottom: 6px;
+}
+
+.checkpoint-text {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* ===== Stats Grid ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  margin-bottom: 0;
+  padding: 14px 16px;
+}
+
+.stat-card.streak {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.stat-card.streak .section-label {
+  color: var(--paper);
+}
+
+.stat-value {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(36px, 9vw, 48px);
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-top: 4px;
+}
+
+.stat-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  margin-left: 4px;
+  letter-spacing: 0.1em;
+}
+
+/* ===== Calendar ===== */
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  border-bottom: 3px solid var(--black);
+  padding-bottom: 10px;
+}
+
+.month-label {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.month-btn {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 14px;
+  background: var(--paper);
+  transition: all 0.1s;
+  box-shadow: 3px 3px 0 var(--black);
+}
+
+.month-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.month-btn:not(:disabled):active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--black);
+}
+
+.weekday-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.weekday-cell {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 4px 0;
+  font-weight: 500;
+}
+
+.weekday-cell.sun { color: var(--red); }
+.weekday-cell.sat { color: var(--blue); }
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-cell {
+  aspect-ratio: 1 / 1;
+  border: 2px solid transparent;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 13px;
+}
+
+.cal-cell.empty {
+  visibility: hidden;
+}
+
+.cal-cell.scheduled {
+  border: 2px dashed var(--black);
+}
+
+.cal-cell.partial {
+  border: 3px solid var(--black);
+  background: var(--paper);
+}
+
+.cal-cell.partial::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: var(--blue);
+}
+
+.cal-cell.done {
+  border: 3px solid var(--black);
+  background: var(--blue);
+  color: var(--paper);
+}
+
+.cal-cell.today {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+.cal-cell.future {
+  opacity: 0.35;
+}
+
+.cal-day {
+  position: relative;
+  z-index: 1;
+}
+
+.cal-mark {
+  position: absolute;
+  bottom: 2px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  z-index: 1;
+}
+
+.cal-cell.done .cal-mark {
+  color: var(--paper);
+}
+
+/* ===== Legend ===== */
+.legend {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+}
+
+.legend-swatch {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--black);
+  flex-shrink: 0;
+}
+
+.legend-swatch.done { background: var(--blue); }
+
+.legend-swatch.partial {
+  background: var(--paper);
+  position: relative;
+}
+
+.legend-swatch.partial::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: var(--blue);
+}
+
+.legend-swatch.scheduled {
+  border: 2px dashed var(--black);
+  background: transparent;
+}
+
+/* ===== Team Footer (per SLOTHFRONT spec) ===== */
+.team-footer {
+  margin-top: auto;
+  padding: 36px 16px calc(40px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  user-select: none;
+  text-align: center;
+}
+
+.team-footer .team-name {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 900;
+  font-size: clamp(18px, 5.5vw, 36px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--black);
+  display: inline-block;
+  white-space: nowrap;
+  background: var(--yellow);
+  padding: 6px 16px;
+  border: 4px solid var(--black);
+  box-shadow: 6px 6px 0 var(--red);
+}
+
+.team-footer .team-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(9px, 2.2vw, 11px);
+  letter-spacing: 0.32em;
+  color: var(--black);
+  text-transform: uppercase;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+/* ===== Week Summary ===== */
+.week-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.ws-cell {
+  background: var(--paper);
+  border: 3px solid var(--black);
+  padding: 12px 14px;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+.ws-cell.streak {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.ws-cell.streak .section-label {
+  color: var(--paper);
+}
+
+.ws-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ws-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(28px, 7vw, 36px);
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+
+.ws-denom {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.ws-cell.streak .ws-denom {
+  color: var(--paper);
+  opacity: 0.7;
+}
+
+.ws-bar {
+  margin-top: 8px;
+  height: 8px;
+  border: 2px solid var(--black);
+  background: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+
+.ws-bar-fill {
+  height: 100%;
+  background: var(--blue);
+  transition: width 0.3s;
+}
+
+.ws-bar-fill.complete {
+  background: var(--yellow);
+}
+
+.ws-bonus {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--yellow);
+  color: var(--black);
+  padding: 1px 6px;
+  margin-left: 4px;
+  vertical-align: 4px;
+  border: 1px solid var(--black);
+}
+
+.ws-flame {
+  display: inline-block;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  margin-left: 4px;
+  vertical-align: 2px;
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(26, 26, 26, 0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: var(--paper);
+  border: 4px solid var(--black);
+  box-shadow: 6px 6px 0 var(--red);
+  padding: 24px;
+  max-width: 460px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-greeting {
+  margin-bottom: 18px;
+}
+
+.modal-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  margin: 6px 0 4px;
+  display: block;
+  background: none;
+  padding: 0;
+  text-transform: none;
+}
+
+#modal-today-jp {
+  display: inline-block;
+  background: var(--yellow);
+  padding: 0 10px;
+  margin: 0 4px;
+  border: 3px solid var(--black);
+  font-family: 'Archivo Black', sans-serif;
+}
+
+.modal-sub {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* 過去14日のhistory表示 */
+.modal-history {
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border: 2px solid var(--black);
+  background: var(--paper);
+}
+
+.modal-history .section-label {
+  margin-bottom: 8px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.history-day {
+  border: 2px solid var(--black);
+  padding: 3px 1px;
+  text-align: center;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 50px;
+  position: relative;
+}
+
+.history-day.done {
+  background: var(--blue);
+  color: var(--paper);
+}
+
+.history-day.partial {
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.history-day.partial::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: var(--blue);
+  z-index: 0;
+}
+
+.hd-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.hd-wd {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.history-day.weekend .hd-wd { color: inherit; }
+.history-day:not(.done):not(.partial) .hd-wd.sun { color: var(--red); }
+.history-day:not(.done):not(.partial) .hd-wd.sat { color: var(--blue); }
+
+.hd-mark {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+  min-height: 10px;
+}
+
+.modal-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.day-option {
+  border: 3px solid var(--black);
+  background: var(--paper);
+  padding: 12px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 4px 4px 0 var(--black);
+  transition: all 0.1s;
+  cursor: pointer;
+  min-height: 92px;
+}
+
+.day-option:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--black);
+}
+
+.day-option.recommended {
+  background: var(--yellow);
+}
+
+.day-option.recommended::before {
+  content: 'おすすめ';
+  position: absolute;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  background: var(--red);
+  color: var(--paper);
+  padding: 1px 5px;
+  margin-top: -22px;
+  margin-left: -2px;
+}
+
+.day-option {
+  position: relative;
+}
+
+.day-option-jp {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.day-option-name {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.modal-skip {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--black);
+  background: var(--paper);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.modal-skip:active {
+  background: var(--black);
+  color: var(--paper);
+}
+
+/* ===== Hidden ===== */
+[hidden] { display: none !important; }
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .app { padding: 12px; }
+  .app-header { padding: 12px 14px; }
+  .brand-mark { font-size: 16px; }
+  .view-tab { padding: 7px 10px; font-size: 10px; }
+  .stats-grid { gap: 10px; }
+  .stat-card { padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-triangle"></div>
+
+<!-- Day Select Modal -->
+<div class="modal-overlay" id="day-select-modal">
+  <div class="modal">
+    <div class="modal-greeting">
+      <span class="section-label" id="modal-date-label"></span>
+      <h2 class="modal-title">今日は<span id="modal-today-jp"></span>曜日</h2>
+      <p class="modal-sub">どのメニューを実施しますか？</p>
+    </div>
+    <div class="modal-history">
+      <span class="section-label">最近 14 日間</span>
+      <div class="history-row" id="modal-history-row"></div>
+    </div>
+    <div class="modal-options">
+      <button class="day-option" data-day="mon">
+        <span class="day-option-jp">月</span>
+        <div class="day-option-name">着地メカニクス＋片脚</div>
+      </button>
+      <button class="day-option" data-day="tue">
+        <span class="day-option-jp">火</span>
+        <div class="day-option-name">弾性・横方向</div>
+      </button>
+      <button class="day-option" data-day="thu">
+        <span class="day-option-jp">木</span>
+        <div class="day-option-name">筋力＋スパイクジャンプ</div>
+      </button>
+      <button class="day-option" data-day="sat">
+        <span class="day-option-jp">土日</span>
+        <div class="day-option-name">フォーム確認・補強</div>
+      </button>
+    </div>
+    <button class="modal-skip" id="modal-skip">あとで決める</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">Jump Training</div>
+      <div class="brand-jp">10分メニュー</div>
+    </div>
+    <div class="view-tabs">
+      <button class="view-tab active" data-view="today">Today</button>
+      <button class="view-tab" data-view="history">History</button>
+    </div>
+  </header>
+
+  <!-- TODAY VIEW -->
+  <div id="view-today">
+    <!-- Week summary -->
+    <div class="week-summary" id="week-summary"></div>
+    <div class="day-tabs" id="day-tabs"></div>
+    <div class="card menu-hero" id="menu-hero"></div>
+    <div class="done-stamp-wrap" id="done-stamp"></div>
+    <div id="exercises"></div>
+    <div class="checkpoint-card" id="checkpoint">
+      <span class="section-label">Checkpoint</span>
+      <div class="checkpoint-text" id="checkpoint-text"></div>
+    </div>
+  </div>
+
+  <!-- HISTORY VIEW -->
+  <div id="view-history" hidden>
+    <div class="stats-grid">
+      <div class="card stat-card">
+        <span class="section-label">この月</span>
+        <div class="stat-value" id="stat-month">0<span class="stat-unit">DAYS</span></div>
+      </div>
+      <div class="card stat-card streak">
+        <span class="section-label">Streak</span>
+        <div class="stat-value" id="stat-streak">0<span class="stat-unit">DAYS</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="month-nav">
+        <button class="month-btn" id="prev-month">&lt;</button>
+        <div class="month-label" id="month-label">2026 / 05</div>
+        <button class="month-btn" id="next-month">&gt;</button>
+      </div>
+      <div class="weekday-header" id="weekday-header"></div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-swatch done"></div>
+          <span>完了</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch partial"></div>
+          <span>途中まで</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch scheduled"></div>
+          <span>予定日（未実施）</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Footer (SLOTHFRONT signature) -->
+  <div class="team-footer">
+    <div class="team-name">KIMISHOW TIME.</div>
+    <div class="team-sub">JUMP TRAINING</div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+// ===== Data =====
+const MENUS = {
+  mon: {
+    label: '月',
+    en: 'MON',
+    title: 'Landing & Single Leg',
+    titleJp: '着地メカニクス＋片脚',
+    theme: '片脚でも、ぶれずに止まる',
+    intensity: 'mid',
+    intensityLabel: '中強度',
+    required: true,
+    exercises: [
+      {
+        id: 'mon-1',
+        name: '準備運動',
+        purpose: '体を温めて関節を動かし、メイン種目の質を上げる。冷えた状態でいきなり跳ぶとケガのリスクが上がる。',
+        detail: '足首回し、カーフレイズ、ハーフスクワット 各10回ずつ。',
+      },
+      {
+        id: 'mon-2',
+        name: '片脚ジャンプ＆スティック',
+        purpose: 'ブロックやスパイクの後、片足で着地する場面で崩れない体を作る。膝のケガ（ACL損傷）を防ぐ最も基本的な動き。',
+        detail: '片脚で軽く跳び、同じ足で着地→3秒静止。左右交互に各8回。',
+        focus: '膝はつま先と同じ方向。「スッ」と静かに着地し、ぐらつかず3秒止まる。',
+        reps: '左右各8',
+      },
+      {
+        id: 'mon-3',
+        name: 'スクワットジャンプ＋着地確認',
+        purpose: '反動を使わない純粋な脚の力を鍛える。動きを止めて確認することで、自分の着地フォームの癖に気づく。',
+        detail: 'しゃがんで2秒静止→真上に跳ぶ→着地で2秒静止。8回。',
+        focus: 'しゃがみで反動を使わず、止まった状態から跳ぶ。両足同時に着地。',
+        reps: '8回',
+      },
+      {
+        id: 'mon-4',
+        name: '90度ターン着地',
+        purpose: '試合中、ボールを追って空中で体勢が変わっても、着地で崩れない技術を養う。',
+        detail: '両脚で跳び、空中で90度回って着地→3秒静止。左右各3回。',
+        focus: '視線でリードする。回転より、止まることを優先。',
+        reps: '左右各3',
+      },
+      {
+        id: 'mon-5',
+        name: 'クールダウン',
+        purpose: '使った筋肉を緩めて翌日に疲労を残さない。継続のためには「やった後のケア」が重要。',
+        detail: 'ふくらはぎ・前ももを軽く伸ばす。',
+      },
+    ],
+    checkpoint: '着地音は静か／膝はつま先方向／3秒ぶれずに静止／ターン後も軸がぶれない',
+  },
+  tue: {
+    label: '火',
+    en: 'TUE',
+    title: 'Lateral & Elastic',
+    titleJp: '弾性・横方向',
+    theme: '横にも素早く弾く',
+    intensity: 'high',
+    intensityLabel: '中〜高強度',
+    required: true,
+    exercises: [
+      {
+        id: 'tue-1',
+        name: '準備運動',
+        purpose: '横方向の素早い動きに入る前に、足首・股関節を動かしておく。',
+        detail: 'スキップ、ハイニー、足首回し。',
+      },
+      {
+        id: 'tue-2',
+        name: 'ラテラルラインホップ',
+        purpose: 'ブロック移動・レシーブ移動を速くする。地面に長く触らない「横方向のバネ」を養う。',
+        detail: '床のラインを左右に両脚で素早く跳び越える。12回×2セット。',
+        focus: '接地時間を短く。地面に着いたらすぐ次へ。上体は左右に倒さない。',
+        reps: '12×2',
+      },
+      {
+        id: 'tue-3',
+        name: '片脚ラテラルホップ＋スティック',
+        purpose: 'レシーブで横に飛び込んだ後、片足で踏ん張って次の動きに移る力。実戦で最も使う動き。',
+        detail: '片脚で横に跳び、同じ足で着地→3秒静止。左右各6回。',
+        focus: '着地で膝が内側に入らない。ぐらついたら幅を狭めていい。',
+        reps: '左右各6',
+      },
+      {
+        id: 'tue-4',
+        name: 'ライン四方ホップ',
+        purpose: 'コートでの素早い方向転換能力。前後左右、どこに行くにも同じスピードで動けることがレシーブの基礎。',
+        detail: '床のラインを基準に前後左右へ素早く跳び分ける。8回。',
+        focus: '中央を毎回経由する。4方向の跳躍距離を均等に。',
+        reps: '8回',
+      },
+      {
+        id: 'tue-5',
+        name: 'クールダウン',
+        purpose: '横方向の動きで使ったふくらはぎを緩める。',
+        detail: 'ふくらはぎを軽く伸ばす。',
+      },
+    ],
+    checkpoint: '接地時間が短い／横方向でも軸がぶれない／4方向で同じスピードを保てる',
+  },
+  thu: {
+    label: '木',
+    en: 'THU',
+    title: 'Power & Spike Jump',
+    titleJp: '筋力＋スパイクジャンプ',
+    theme: '連続して、爆発的に跳ぶ',
+    intensity: 'high',
+    intensityLabel: '高強度',
+    required: true,
+    exercises: [
+      {
+        id: 'thu-1',
+        name: '準備運動',
+        purpose: '高強度のジャンプ系種目に入る前に、下半身を起こしておく。',
+        detail: 'スクワット、ランジ 各5回。',
+      },
+      {
+        id: 'thu-2',
+        name: '連続CMJ',
+        purpose: '試合終盤までジャンプ高さを維持する力。最後のセットの最後の1本まで、最初と同じ高さで跳べるようになる。',
+        detail: '5回連続でカウンタームーブメントジャンプ。各回で深くしゃがみ、爆発的に跳ぶ。3セット。',
+        focus: '5回目を一番高く跳ぶつもりで。腕を毎回後ろまで振る。',
+        reps: '5×3',
+      },
+      {
+        id: 'thu-3',
+        name: 'アプローチ付きジャンプ',
+        purpose: 'スパイク動作そのもの。助走の水平方向の勢いを、上方向のジャンプに変換する技術。',
+        detail: 'スパイクの3歩助走でジャンプ→片手を最高点まで伸ばす。6回×2セット。',
+        focus: 'かかとでブレーキをかけて上に跳ぶ。前に流れない。',
+        reps: '6×2',
+      },
+      {
+        id: 'thu-4',
+        name: '深屈曲ジャンプ',
+        purpose: '反動を使わない純粋な瞬発力を鍛える。ブロックのように、下からいきなり跳び上がる場面で効く。',
+        detail: '深くしゃがんで3秒静止→爆発的に真上へ。5回。',
+        focus: '3秒、しっかり止まってから跳ぶ。号令で一気に。',
+        reps: '5回',
+      },
+      {
+        id: 'thu-5',
+        name: 'クールダウン',
+        purpose: '高強度トレ後の筋疲労を流す。',
+        detail: '前もも、ふくらはぎを伸ばす。',
+      },
+    ],
+    checkpoint: '連続CMJで高さが落ちない／助走を上方向に変換できている／深屈曲後の初動が鋭い',
+  },
+  sat: {
+    label: '土日',
+    en: 'SAT',
+    title: 'Form & Recovery',
+    titleJp: 'フォーム確認・補強',
+    theme: '余裕があれば。軽めの量でフォームを確認',
+    intensity: 'low',
+    intensityLabel: '低強度',
+    required: false,
+    exercises: [
+      {
+        id: 'sat-1',
+        name: '準備運動',
+        purpose: '土日は軽めの日。それでもケガ予防のための準備は省かない。',
+        detail: '軽くジョグ、ハーフスクワット。',
+      },
+      {
+        id: 'sat-2',
+        name: 'アプローチ付きジャンプ',
+        purpose: '今週のスパイクジャンプの動きを、疲労が抜けた状態で再確認する。フォームを定着させる回。',
+        detail: 'スパイクの3歩助走でジャンプ→片手を伸ばす。6回。',
+        focus: '記録より、フォームを丁寧に。',
+        reps: '6回',
+      },
+      {
+        id: 'sat-3',
+        name: '片脚ジャンプ＆スティック',
+        purpose: '着地メカニクスの再確認。月曜の動きが正しく身についているか自分でチェックする。',
+        detail: '片脚で軽く跳び、同じ足で着地→3秒静止。左右各5回。',
+        focus: '膝はつま先と同じ方向。',
+        reps: '左右各5',
+      },
+      {
+        id: 'sat-4',
+        name: 'クールダウン',
+        purpose: '一週間のトレを締める。軽めでも丁寧に。',
+        detail: 'ふくらはぎ、足裏を伸ばす。',
+      },
+    ],
+    checkpoint: '月火木の動きが正しいフォームで再現できているか／疲労が残っていないか',
+  },
+};
+
+const DAY_KEYS = ['mon', 'tue', 'thu', 'sat'];
+const REQUIRED_DAY_KEYS = ['mon', 'tue', 'thu']; // ストリーク・週進捗の対象（土はボーナス扱い）
+const WEEKDAY_TO_MENU = { 1: 'mon', 2: 'tue', 4: 'thu', 6: 'sat' };
+const REQUIRED_WEEKDAY_TO_MENU = { 1: 'mon', 2: 'tue', 4: 'thu' };
+const STORAGE_KEY = 'jumpTraining:records';
+
+// ===== State =====
+let records = {};
+let activeMenu = getTodayMenu();
+let monthOffset = 0;
+
+// ===== Utils =====
+function getTodayMenu() {
+  const day = new Date().getDay();
+  return WEEKDAY_TO_MENU[day] || 'mon';
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function formatDate(d) {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+function todayKey() {
+  return formatDate(new Date());
+}
+
+function loadRecords() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return migrateRecords(parsed);
+  } catch (e) {
+    return {};
+  }
+}
+
+// すべての旧形式を {menu, checks} 形式に変換
+function migrateRecords(records) {
+  const out = {};
+  for (const [date, r] of Object.entries(records)) {
+    if (!r) continue;
+    if (r.menu && r.checks) {
+      // v1形式: そのまま
+      out[date] = r;
+    } else if (r.menus && typeof r.menus === 'object') {
+      // v2形式（複数メニュー）: 最も進捗のあるメニューを採用
+      const entries = Object.entries(r.menus);
+      if (entries.length === 0) continue;
+      let best = entries[0];
+      for (const e of entries) {
+        const cnt = Object.values(e[1] || {}).filter(Boolean).length;
+        const bestCnt = Object.values(best[1] || {}).filter(Boolean).length;
+        if (cnt > bestCnt) best = e;
+      }
+      out[date] = { menu: best[0], checks: best[1] || {} };
+    }
+  }
+  return out;
+}
+
+function saveRecords() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  } catch (e) {
+    console.error('保存失敗', e);
+  }
+}
+
+// その日のメニューチェック状態を取得（指定メニューと一致する場合のみ）
+function getMenuChecks(date, menuKey) {
+  const r = records[date];
+  if (!r || r.menu !== menuKey) return {};
+  return r.checks || {};
+}
+
+// その日のあるメニューの完了状態
+function getMenuStatus(date, menuKey) {
+  const checks = getMenuChecks(date, menuKey);
+  const total = MENUS[menuKey].exercises.length;
+  const done = Object.values(checks).filter(Boolean).length;
+  if (done === 0) return 'none';
+  if (done === total) return 'done';
+  return 'partial';
+}
+
+// その日に何かしら実施したメニューを取得（1日1メニューなので最大1要素）
+function getActiveMenusOnDate(date) {
+  const r = records[date];
+  if (!r || !r.menu || !r.checks) return [];
+  const cnt = Object.values(r.checks).filter(Boolean).length;
+  return cnt > 0 ? [r.menu] : [];
+}
+
+// 月曜始まりの「今週」の進捗を計算
+// 必須3メニュー（月火木）について：その曜日に実施されたか（メニューはどれでもよい）
+function getWeekProgress() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  // 月曜始まり: getDay() で 0=日 1=月 ... 6=土
+  // 今日の曜日から月曜までさかのぼる
+  const dow = today.getDay();
+  const daysFromMon = dow === 0 ? 6 : dow - 1;
+  const monday = new Date(today);
+  monday.setDate(monday.getDate() - daysFromMon);
+
+  let required = 0;
+  let done = 0;
+  let bonus = false; // 土曜実施したか
+  // 月曜から日曜まで7日間チェック
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    if (d > today) break; // 未来日はカウントしない
+    const wd = d.getDay();
+    const key = formatDate(d);
+    const did = getActiveMenusOnDate(key).length > 0;
+    if (REQUIRED_WEEKDAY_TO_MENU[wd]) {
+      required++;
+      if (did) done++;
+    } else if (wd === 6 && did) {
+      bonus = true;
+    }
+  }
+  // 必須日数の合計（今週の月火木の総数。週前半なら3未満）
+  const requiredTotal = 3;
+  return { done, required, requiredTotal, bonus };
+}
+
+// ストリーク：必須予定日（月火木）の連続実施日数
+// 水・金・日・土はスキップしてストリーク継続
+// 必須予定日に実施しなかった場合、ストリーク終了
+function computeStreak() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let streak = 0;
+  const cursor = new Date(today);
+  let allowSkipToday = true;
+  let safety = 0;
+  while (safety++ < 365) {
+    const key = formatDate(cursor);
+    const did = getActiveMenusOnDate(key).length > 0;
+    const wd = cursor.getDay();
+    const isRequired = !!REQUIRED_WEEKDAY_TO_MENU[wd];
+
+    if (isRequired) {
+      if (did) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+        allowSkipToday = false;
+      } else if (allowSkipToday && key === todayKey()) {
+        // 今日が必須日でまだやってない場合、スキップして昨日からカウント
+        cursor.setDate(cursor.getDate() - 1);
+        allowSkipToday = false;
+      } else {
+        // 過去の必須日で未実施 → ストリーク終了
+        break;
+      }
+    } else {
+      // 必須日でない（水金日土）→ スキップして継続
+      cursor.setDate(cursor.getDate() - 1);
+    }
+  }
+  return streak;
+}
+
+// ===== Day tabs =====
+function renderWeekSummary() {
+  const wp = getWeekProgress();
+  const streak = computeStreak();
+  const isComplete = wp.done >= wp.requiredTotal;
+  const percent = (wp.done / wp.requiredTotal) * 100;
+
+  document.getElementById('week-summary').innerHTML = `
+    <div class="ws-cell">
+      <span class="section-label">This Week</span>
+      <div class="ws-row">
+        <span class="ws-num">${wp.done}</span>
+        <span class="ws-denom">/ ${wp.requiredTotal}</span>
+        ${wp.bonus ? '<span class="ws-bonus">+土</span>' : ''}
+      </div>
+      <div class="ws-bar">
+        <div class="ws-bar-fill ${isComplete ? 'complete' : ''}" style="width: ${Math.min(percent, 100)}%"></div>
+      </div>
+    </div>
+    <div class="ws-cell streak">
+      <span class="section-label">Streak</span>
+      <div class="ws-row">
+        <span class="ws-num">${streak}</span>
+        <span class="ws-denom">DAYS${streak >= 3 ? '<span class="ws-flame">🔥</span>' : ''}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderDayTabs() {
+  const container = document.getElementById('day-tabs');
+  const date = todayKey();
+  container.innerHTML = DAY_KEYS.map(key => {
+    const m = MENUS[key];
+    const isActive = key === activeMenu;
+    const status = getMenuStatus(date, key); // 'done' | 'partial' | 'none'
+    const statusClass = status !== 'none' ? `status-${status}` : '';
+    return `<button class="day-tab ${isActive ? 'active' : ''} ${statusClass}" data-day="${key}">
+      <span class="day-jp">${m.label}</span>
+      <span class="day-en">${m.en}</span>
+    </button>`;
+  }).join('');
+
+  container.querySelectorAll('.day-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeMenu = btn.dataset.day;
+      renderTodayView();
+    });
+  });
+}
+
+// ===== Today view =====
+function renderTodayView() {
+  renderWeekSummary();
+  renderDayTabs();
+  const menu = MENUS[activeMenu];
+  const date = todayKey();
+  const menuChecks = getMenuChecks(date, activeMenu);
+  const checkedCount = Object.values(menuChecks).filter(Boolean).length;
+  const total = menu.exercises.length;
+  const allDone = checkedCount === total;
+
+  const intensityClass = `intensity-${menu.intensity}`;
+  document.getElementById('menu-hero').innerHTML = `
+    <span class="section-label">${activeMenu === getTodayMenu() ? "Today's Menu" : `${menu.label}曜のメニュー`}</span>
+    <h1>${menu.title}</h1>
+    <div class="menu-jp">${menu.titleJp}</div>
+    <div class="menu-theme">「${menu.theme}」</div>
+    <div class="menu-meta">
+      <span class="meta-tag ${intensityClass}">${menu.intensityLabel}</span>
+      ${!menu.required ? '<span class="meta-tag optional">余裕があれば</span>' : ''}
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-count">${checkedCount} / ${total}</span>
+        <span class="progress-total">Progress</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${(checkedCount / total) * 100}%"></div>
+      </div>
+    </div>
+  `;
+
+  const stampEl = document.getElementById('done-stamp');
+  if (allDone) {
+    stampEl.innerHTML = `
+      <div class="done-stamp">
+        <span class="stamp-text">Complete</span>
+        <span class="stamp-jp">${menu.label}曜メニュー完了</span>
+      </div>
+    `;
+  } else {
+    stampEl.innerHTML = '';
+  }
+
+  const exContainer = document.getElementById('exercises');
+  exContainer.innerHTML = menu.exercises.map((ex, idx) => {
+    const checked = !!menuChecks[ex.id];
+    const focusBlock = ex.focus
+      ? `<div class="ex-section focus"><span class="ex-label">Focus</span><span class="ex-text">${ex.focus}</span></div>`
+      : '';
+    return `<button class="exercise ${checked ? 'checked' : ''}" data-ex="${ex.id}">
+      <div class="checkbox">
+        <svg class="checkbox-mark" viewBox="0 0 16 16" fill="none" stroke="${checked ? '#f4f0e8' : '#1a1a1a'}" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
+          <path d="M3 8 L7 12 L13 4"/>
+        </svg>
+      </div>
+      <div class="exercise-body">
+        <div class="exercise-meta">
+          <span class="exercise-num">No.${pad(idx + 1)}</span>
+          ${ex.reps ? `<span class="exercise-reps">${ex.reps}</span>` : ''}
+        </div>
+        <div class="exercise-name">${ex.name}</div>
+        <div class="ex-section why"><span class="ex-label">Why</span><span class="ex-text">${ex.purpose}</span></div>
+        <div class="ex-section how"><span class="ex-label">How</span><span class="ex-text">${ex.detail}</span></div>
+        ${focusBlock}
+      </div>
+    </button>`;
+  }).join('');
+
+  exContainer.querySelectorAll('.exercise').forEach(btn => {
+    btn.addEventListener('click', () => toggleExercise(btn.dataset.ex));
+  });
+
+  document.getElementById('checkpoint-text').textContent = menu.checkpoint;
+}
+
+function toggleExercise(exId) {
+  const date = todayKey();
+  const existing = records[date];
+
+  // 既に別のメニューで進捗がある場合、変更確認
+  if (existing && existing.menu !== activeMenu) {
+    const cnt = Object.values(existing.checks || {}).filter(Boolean).length;
+    if (cnt > 0) {
+      const ok = confirm(
+        `本日は既に「${MENUS[existing.menu].label} ${MENUS[existing.menu].titleJp}」を実施中です（${cnt}個チェック済み）。\n\n` +
+        `「${MENUS[activeMenu].label} ${MENUS[activeMenu].titleJp}」に変更しますか？\n` +
+        `（現在の進捗は失われます）`
+      );
+      if (!ok) {
+        // キャンセル → 元のメニューに戻す
+        activeMenu = existing.menu;
+        renderTodayView();
+        return;
+      }
+    }
+  }
+
+  // レコード作成 or メニュー変更
+  if (!records[date] || records[date].menu !== activeMenu) {
+    records[date] = { menu: activeMenu, checks: {} };
+  }
+
+  records[date].checks[exId] = !records[date].checks[exId];
+  saveRecords();
+  renderTodayView();
+}
+
+// ===== History view =====
+function renderHistoryView() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+  const year = target.getFullYear();
+  const month = target.getMonth();
+  document.getElementById('month-label').textContent = `${year} / ${pad(month + 1)}`;
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const startWeekday = firstDay.getDay();
+
+  // 月内の実施日数（何かしらチェックがあった日）
+  let monthCount = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = formatDate(new Date(year, month, d));
+    if (getActiveMenusOnDate(key).length > 0) monthCount++;
+  }
+  document.getElementById('stat-month').innerHTML = `${monthCount}<span class="stat-unit">DAYS</span>`;
+
+  // ストリーク（必須予定日の連続実施。共通関数を使用）
+  const streak = computeStreak();
+  document.getElementById('stat-streak').innerHTML = `${streak}<span class="stat-unit">DAYS</span>`;
+
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  document.getElementById('weekday-header').innerHTML = weekdays.map((w, i) => {
+    const cls = i === 0 ? 'sun' : i === 6 ? 'sat' : '';
+    return `<div class="weekday-cell ${cls}">${w}</div>`;
+  }).join('');
+
+  const cells = [];
+  for (let i = 0; i < startWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = cells.map(d => {
+    if (d === null) return '<div class="cal-cell empty"></div>';
+    const date = new Date(year, month, d);
+    const key = formatDate(date);
+    const dow = date.getDay();
+    const expectedMenu = WEEKDAY_TO_MENU[dow];
+    const activeMenus = getActiveMenusOnDate(key); // 実施した全メニュー
+    const isFuture = date > today && key !== todayKey();
+    const isToday = key === todayKey();
+
+    // この日に「全完了」したメニューが1つでもあるか
+    let hasDone = false;
+    let hasPartial = false;
+    for (const k of activeMenus) {
+      const status = getMenuStatus(key, k);
+      if (status === 'done') hasDone = true;
+      else if (status === 'partial') hasPartial = true;
+    }
+
+    let cls = 'cal-cell';
+    if (hasDone) cls += ' done';
+    else if (hasPartial) cls += ' partial';
+    else if (expectedMenu) cls += ' scheduled';
+    if (isToday) cls += ' today';
+    if (isFuture) cls += ' future';
+
+    // 実施した全メニューのラベルを表示
+    let mark = '';
+    if (activeMenus.length > 0) {
+      const labels = activeMenus.map(k => MENUS[k].label).join('');
+      mark = `<span class="cal-mark">${labels}</span>`;
+    }
+
+    return `<div class="${cls}"><span class="cal-day">${d}</span>${mark}</div>`;
+  }).join('');
+
+  document.getElementById('next-month').disabled = monthOffset >= 0;
+}
+
+// ===== Day Select Modal =====
+function showDaySelectModal() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const wd = today.getDay();
+  const wdJpMap = { 0: '日', 1: '月', 2: '火', 3: '水', 4: '木', 5: '金', 6: '土' };
+  const todayMenu = WEEKDAY_TO_MENU[wd];
+  const dateStr = `${today.getFullYear()}.${pad(today.getMonth() + 1)}.${pad(today.getDate())}`;
+
+  document.getElementById('modal-date-label').textContent = dateStr;
+  document.getElementById('modal-today-jp').textContent = wdJpMap[wd];
+
+  // 推薦表示：今日が予定日のメニューを黄色背景に
+  document.querySelectorAll('.day-option').forEach(btn => {
+    btn.classList.toggle('recommended', btn.dataset.day === todayMenu);
+  });
+
+  // 過去14日間のhistory表示（14日前から昨日まで、左=古、右=新）
+  const historyRow = document.getElementById('modal-history-row');
+  let historyHtml = '';
+  for (let i = 14; i >= 1; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = formatDate(d);
+    const r = records[key];
+    const dwd = d.getDay();
+    const wdLabel = wdJpMap[dwd];
+    const dateLabel = `${d.getMonth() + 1}/${d.getDate()}`;
+
+    let cls = 'history-day';
+    let mark = '';
+    if (r && r.menu && r.checks) {
+      const menuObj = MENUS[r.menu];
+      const total = menuObj ? menuObj.exercises.length : 0;
+      const done = Object.values(r.checks).filter(Boolean).length;
+      if (done > 0 && menuObj) {
+        if (done === total) cls += ' done';
+        else cls += ' partial';
+        mark = menuObj.label;
+      }
+    }
+    const wdClass = dwd === 0 ? 'sun' : dwd === 6 ? 'sat' : '';
+
+    historyHtml += `<div class="${cls}">
+      <span class="hd-date">${dateLabel}</span>
+      <span class="hd-wd ${wdClass}">${wdLabel}</span>
+      <span class="hd-mark">${mark}</span>
+    </div>`;
+  }
+  historyRow.innerHTML = historyHtml;
+
+  document.getElementById('day-select-modal').classList.add('active');
+}
+
+function hideDaySelectModal() {
+  document.getElementById('day-select-modal').classList.remove('active');
+}
+
+// ===== View switching =====
+function switchView(view) {
+  document.querySelectorAll('.view-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === view);
+  });
+  document.getElementById('view-today').hidden = view !== 'today';
+  document.getElementById('view-history').hidden = view !== 'history';
+  if (view === 'history') renderHistoryView();
+}
+
+// ===== Init =====
+function init() {
+  records = loadRecords();
+  const todayK = todayKey();
+
+  // 既に今日のレコードがあればそのメニューを開く、なければ選択モーダル
+  if (records[todayK] && records[todayK].menu) {
+    activeMenu = records[todayK].menu;
+  } else {
+    // 今日が予定日ならそのメニュー、そうでなければデフォルト
+    activeMenu = getTodayMenu();
+    showDaySelectModal();
+  }
+
+  renderTodayView();
+
+  document.querySelectorAll('.view-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+
+  document.querySelectorAll('.day-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeMenu = btn.dataset.day;
+      hideDaySelectModal();
+      renderTodayView();
+    });
+  });
+
+  document.getElementById('modal-skip').addEventListener('click', hideDaySelectModal);
+
+  document.getElementById('prev-month').addEventListener('click', () => {
+    monthOffset--;
+    renderHistoryView();
+  });
+  document.getElementById('next-month').addEventListener('click', () => {
+    if (monthOffset < 0) {
+      monthOffset++;
+      renderHistoryView();
+    }
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>
