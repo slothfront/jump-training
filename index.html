@@ -204,9 +204,10 @@ body::after {
 }
 
 .day-tab .day-en {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.16em;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
 
@@ -1050,15 +1051,16 @@ body::after {
 .day-option {
   border: 3px solid var(--black);
   background: var(--paper);
-  padding: 12px;
+  padding: 10px 12px;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
   box-shadow: 4px 4px 0 var(--black);
   transition: all 0.1s;
   cursor: pointer;
-  min-height: 92px;
+  min-height: 102px;
+  position: relative;
 }
 
 .day-option:active {
@@ -1083,10 +1085,6 @@ body::after {
   margin-left: -2px;
 }
 
-.day-option {
-  position: relative;
-}
-
 .day-option-jp {
   font-family: 'Noto Sans JP', sans-serif;
   font-weight: 900;
@@ -1094,11 +1092,24 @@ body::after {
   line-height: 1;
 }
 
+.day-option-day {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.day-option.recommended .day-option-day {
+  color: var(--black);
+}
+
 .day-option-name {
   font-family: 'Noto Sans JP', sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 1.3;
+  margin-top: 4px;
 }
 
 .modal-skip {
@@ -1117,6 +1128,32 @@ body::after {
 .modal-skip:active {
   background: var(--black);
   color: var(--paper);
+}
+
+.modal-skip.danger {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.modal-skip.danger:active {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.past-edit-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* カレンダーセルをクリック可能に */
+.cal-cell:not(.empty):not(.future) {
+  cursor: pointer;
+  transition: transform 0.05s;
+}
+
+.cal-cell:not(.empty):not(.future):active {
+  transform: scale(0.95);
 }
 
 /* ===== Hidden ===== */
@@ -1151,23 +1188,64 @@ body::after {
     </div>
     <div class="modal-options">
       <button class="day-option" data-day="mon">
-        <span class="day-option-jp">月</span>
+        <span class="day-option-jp">A</span>
+        <span class="day-option-day">月曜メニュー</span>
         <div class="day-option-name">着地メカニクス＋片脚</div>
       </button>
       <button class="day-option" data-day="tue">
-        <span class="day-option-jp">火</span>
+        <span class="day-option-jp">B</span>
+        <span class="day-option-day">火曜メニュー</span>
         <div class="day-option-name">弾性・横方向</div>
       </button>
       <button class="day-option" data-day="thu">
-        <span class="day-option-jp">木</span>
+        <span class="day-option-jp">C</span>
+        <span class="day-option-day">木曜メニュー</span>
         <div class="day-option-name">筋力＋スパイクジャンプ</div>
       </button>
       <button class="day-option" data-day="sat">
-        <span class="day-option-jp">土日</span>
+        <span class="day-option-jp">EX</span>
+        <span class="day-option-day">土日メニュー</span>
         <div class="day-option-name">フォーム確認・補強</div>
       </button>
     </div>
     <button class="modal-skip" id="modal-skip">あとで決める</button>
+  </div>
+</div>
+
+<!-- Past Date Edit Modal -->
+<div class="modal-overlay" id="past-edit-modal">
+  <div class="modal">
+    <div class="modal-greeting">
+      <span class="section-label" id="past-modal-date-label"></span>
+      <h2 class="modal-title" id="past-modal-title">この日のメニュー</h2>
+      <p class="modal-sub" id="past-modal-sub">どのメニューを実施しましたか？(タップで全完了として記録)</p>
+    </div>
+    <div class="modal-options">
+      <button class="day-option past-edit-option" data-day="mon">
+        <span class="day-option-jp">A</span>
+        <span class="day-option-day">月曜メニュー</span>
+        <div class="day-option-name">着地メカニクス＋片脚</div>
+      </button>
+      <button class="day-option past-edit-option" data-day="tue">
+        <span class="day-option-jp">B</span>
+        <span class="day-option-day">火曜メニュー</span>
+        <div class="day-option-name">弾性・横方向</div>
+      </button>
+      <button class="day-option past-edit-option" data-day="thu">
+        <span class="day-option-jp">C</span>
+        <span class="day-option-day">木曜メニュー</span>
+        <div class="day-option-name">筋力＋スパイクジャンプ</div>
+      </button>
+      <button class="day-option past-edit-option" data-day="sat">
+        <span class="day-option-jp">EX</span>
+        <span class="day-option-day">土日メニュー</span>
+        <div class="day-option-name">フォーム確認・補強</div>
+      </button>
+    </div>
+    <div class="past-edit-actions">
+      <button class="modal-skip danger" id="past-edit-delete">この日の記録を削除</button>
+      <button class="modal-skip" id="past-edit-cancel">キャンセル</button>
+    </div>
   </div>
 </div>
 
@@ -1252,8 +1330,8 @@ body::after {
 // ===== Data =====
 const MENUS = {
   mon: {
-    label: '月',
-    en: 'MON',
+    label: 'A',
+    en: '月曜',
     title: 'Landing & Single Leg',
     titleJp: '着地メカニクス＋片脚',
     theme: '片脚でも、ぶれずに止まる',
@@ -1301,8 +1379,8 @@ const MENUS = {
     checkpoint: '着地音は静か／膝はつま先方向／3秒ぶれずに静止／ターン後も軸がぶれない',
   },
   tue: {
-    label: '火',
-    en: 'TUE',
+    label: 'B',
+    en: '火曜',
     title: 'Lateral & Elastic',
     titleJp: '弾性・横方向',
     theme: '横にも素早く弾く',
@@ -1350,8 +1428,8 @@ const MENUS = {
     checkpoint: '接地時間が短い／横方向でも軸がぶれない／4方向で同じスピードを保てる',
   },
   thu: {
-    label: '木',
-    en: 'THU',
+    label: 'C',
+    en: '木曜',
     title: 'Power & Spike Jump',
     titleJp: '筋力＋スパイクジャンプ',
     theme: '連続して、爆発的に跳ぶ',
@@ -1399,8 +1477,8 @@ const MENUS = {
     checkpoint: '連続CMJで高さが落ちない／助走を上方向に変換できている／深屈曲後の初動が鋭い',
   },
   sat: {
-    label: '土日',
-    en: 'SAT',
+    label: 'EX',
+    en: '土日',
     title: 'Form & Recovery',
     titleJp: 'フォーム確認・補強',
     theme: '余裕があれば。軽めの量でフォームを確認',
@@ -1411,7 +1489,7 @@ const MENUS = {
       {
         id: 'sat-1',
         name: '準備運動',
-        purpose: '土日は軽めの日。それでもケガ予防のための準備は省かない。',
+        purpose: 'EXは軽めの日。それでもケガ予防のための準備は省かない。',
         detail: '軽くジョグ、ハーフスクワット。',
       },
       {
@@ -1672,7 +1750,7 @@ function renderTodayView() {
 
   const intensityClass = `intensity-${menu.intensity}`;
   document.getElementById('menu-hero').innerHTML = `
-    <span class="section-label">${activeMenu === getTodayMenu() ? "Today's Menu" : `${menu.label}曜のメニュー`}</span>
+    <span class="section-label">${activeMenu === getTodayMenu() ? "Today's Menu" : `${menu.label}メニュー`}</span>
     <h1>${menu.title}</h1>
     <div class="menu-jp">${menu.titleJp}</div>
     <div class="menu-theme">「${menu.theme}」</div>
@@ -1696,7 +1774,7 @@ function renderTodayView() {
     stampEl.innerHTML = `
       <div class="done-stamp">
         <span class="stamp-text">Complete</span>
-        <span class="stamp-jp">${menu.label}曜メニュー完了</span>
+        <span class="stamp-jp">${menu.label}メニュー完了</span>
       </div>
     `;
   } else {
@@ -1837,8 +1915,17 @@ function renderHistoryView() {
       mark = `<span class="cal-mark">${labels}</span>`;
     }
 
-    return `<div class="${cls}"><span class="cal-day">${d}</span>${mark}</div>`;
+    const dataAttr = isFuture ? '' : `data-date="${key}"`;
+    return `<div class="${cls}" ${dataAttr}><span class="cal-day">${d}</span>${mark}</div>`;
   }).join('');
+
+  // セルクリックイベント
+  grid.querySelectorAll('.cal-cell[data-date]').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const date = cell.dataset.date;
+      showPastEditModal(date);
+    });
+  });
 
   document.getElementById('next-month').disabled = monthOffset >= 0;
 }
@@ -1901,6 +1988,68 @@ function hideDaySelectModal() {
   document.getElementById('day-select-modal').classList.remove('active');
 }
 
+// ===== Past Date Edit Modal =====
+let pastEditDate = null;
+
+function showPastEditModal(dateKey) {
+  pastEditDate = dateKey;
+  const wdJpMap = { 0: '日', 1: '月', 2: '火', 3: '水', 4: '木', 5: '金', 6: '土' };
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const wd = date.getDay();
+  const dateStr = `${y}.${pad(m)}.${pad(d)} (${wdJpMap[wd]})`;
+  document.getElementById('past-modal-date-label').textContent = dateStr;
+
+  // 既存記録があるか
+  const existing = records[dateKey];
+  if (existing && existing.menu) {
+    document.getElementById('past-modal-title').textContent = `この日の記録: ${MENUS[existing.menu].label}`;
+    document.getElementById('past-modal-sub').textContent = '別のメニューを選ぶと上書きされます。';
+  } else {
+    document.getElementById('past-modal-title').textContent = 'この日のメニューを記録';
+    document.getElementById('past-modal-sub').textContent = 'タップで全完了として記録します。';
+  }
+
+  // 削除ボタン：記録があれば表示
+  document.getElementById('past-edit-delete').style.display = existing ? '' : 'none';
+
+  document.getElementById('past-edit-modal').classList.add('active');
+}
+
+function hidePastEditModal() {
+  document.getElementById('past-edit-modal').classList.remove('active');
+  pastEditDate = null;
+}
+
+function setPastRecord(menuKey) {
+  if (!pastEditDate) return;
+  const menu = MENUS[menuKey];
+  if (!menu) return;
+  const checks = {};
+  menu.exercises.forEach(ex => { checks[ex.id] = true; });
+  records[pastEditDate] = { menu: menuKey, checks };
+  saveRecords();
+  hidePastEditModal();
+  renderHistoryView();
+  // Today画面の表示も更新（今日のレコードを変更した場合）
+  if (pastEditDate === todayKey()) {
+    activeMenu = menuKey;
+    renderTodayView();
+  }
+}
+
+function deletePastRecord() {
+  if (!pastEditDate) return;
+  if (!confirm('この日の記録を削除しますか？')) return;
+  delete records[pastEditDate];
+  saveRecords();
+  hidePastEditModal();
+  renderHistoryView();
+  if (pastEditDate === todayKey()) {
+    renderTodayView();
+  }
+}
+
 // ===== View switching =====
 function switchView(view) {
   document.querySelectorAll('.view-tab').forEach(b => {
@@ -1940,6 +2089,15 @@ function init() {
   });
 
   document.getElementById('modal-skip').addEventListener('click', hideDaySelectModal);
+
+  // 過去日付編集モーダル
+  document.querySelectorAll('.past-edit-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setPastRecord(btn.dataset.day);
+    });
+  });
+  document.getElementById('past-edit-delete').addEventListener('click', deletePastRecord);
+  document.getElementById('past-edit-cancel').addEventListener('click', hidePastEditModal);
 
   document.getElementById('prev-month').addEventListener('click', () => {
     monthOffset--;
